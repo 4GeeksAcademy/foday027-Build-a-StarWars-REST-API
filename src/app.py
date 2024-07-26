@@ -5,10 +5,10 @@ import os
 from flask import Flask, request, jsonify, url_for
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from flask_cors import CORS
+# from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, People
+from models import db, People, Planet, Favourite
 #from models import Person
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 MIGRATE = Migrate(app, db)
 db.init_app(app)
-CORS(app)
+# CORS(app)
 setup_admin(app)
 
 # Handle/serialize errors like a JSON object
@@ -36,14 +36,49 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
+
+# GET REQUEST HERE
+
 @app.route('/people', methods=['GET'])
-def handle_hello():
+def handle_hey():
 
-    response_body = {
-        "msg": "Hello, this is your GET /people response "
-    }
+    characters = People.query.all()
+    all_people = list(map(lambda x: x.serialize(), characters))
 
-    return jsonify(response_body), 200
+    return jsonify(all_people), 200
+
+
+
+@app.route('/planet', methods=['GET'])
+def handle_sup():
+
+    characters = Planet.query.all()
+    all_planet = list(map(lambda x: x.serialize(), characters))
+
+    return jsonify(all_planet), 200
+
+
+
+@app.route('/favourite', methods=['GET'])
+def handle_bye():
+
+    characters = Favourite.query.all()
+    all_favourite = list(map(lambda x: x.serialize(), characters))
+
+    return jsonify(all_favourite), 200
+
+
+
+# POST REQUEST HERE
+
+
+@app.route('/people', methods=['POST'])
+def handle_hey():
+
+    characters = People.query.all()
+    all_people = list(map(lambda x: x.serialize(), characters))
+
+    return jsonify(all_people), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
